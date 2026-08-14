@@ -2,7 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { AuthResponse, LoginRequest, Usuario } from '../models/auth.models';
+import {
+  AuthResponse,
+  LoginRequest,
+  MensajeResponse,
+  OlvidePasswordRequest,
+  RegistroRequest,
+  ResetPasswordRequest,
+  Usuario,
+} from '../models/auth.models';
 
 const TOKEN_KEY = 'cash_track_token';
 const USUARIO_KEY = 'cash_track_usuario';
@@ -19,6 +27,20 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(`${this.baseUrl}/login`, data)
       .pipe(tap((res) => this.guardarSesion(res)));
+  }
+
+  registro(data: RegistroRequest): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/registro`, data)
+      .pipe(tap((res) => this.guardarSesion(res)));
+  }
+
+  olvidePassword(data: OlvidePasswordRequest): Observable<MensajeResponse> {
+    return this.http.post<MensajeResponse>(`${this.baseUrl}/olvide-password`, data);
+  }
+
+  resetPassword(data: ResetPasswordRequest): Observable<MensajeResponse> {
+    return this.http.post<MensajeResponse>(`${this.baseUrl}/reset-password`, data);
   }
 
   logout(): void {

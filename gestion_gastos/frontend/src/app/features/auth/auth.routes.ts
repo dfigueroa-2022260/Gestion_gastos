@@ -6,4 +6,23 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () =>
       import('./login/login.component').then((m) => m.LoginComponent),
   },
+  {
+    path: 'registro',
+    loadComponent: () =>
+      import('./registro/registro.component').then((m) => m.RegistroComponent),
+  },
+  {
+    path: 'olvide-password',
+    loadComponent: () =>
+      import('./olvide-password/olvide-password.component').then(
+        (m) => m.OlvidePasswordComponent
+      ),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent
+      ),
+  },
 ];

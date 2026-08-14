@@ -9,7 +9,26 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegistroRequest {
+  nombre: string;
+  email: string;
+  password: string;
+}
+
+export interface OlvidePasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
 export interface AuthResponse {
   token: string;
   usuario: Usuario;
+}
+
+export interface MensajeResponse {
+  mensaje: string;
 }

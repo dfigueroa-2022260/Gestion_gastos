@@ -4,6 +4,8 @@ CREATE TABLE "usuarios" (
     "nombre" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "resetToken" TEXT,
+    "resetTokenExp" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -37,6 +39,9 @@ CREATE TABLE "gastos" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "usuarios_email_key" ON "usuarios"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "usuarios_resetToken_key" ON "usuarios"("resetToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "categorias_usuarioId_nombre_key" ON "categorias"("usuarioId", "nombre");
