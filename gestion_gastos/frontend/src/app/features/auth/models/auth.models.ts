@@ -1,7 +1,10 @@
+export type RolUsuario = 'ADMIN' | 'USUARIO';
+
 export interface Usuario {
   id: string;
   nombre: string;
   email: string;
+  rol: RolUsuario;
 }
 
 export interface LoginRequest {

@@ -28,14 +28,22 @@ export const registrarUsuario = async (data: RegistroInput) => {
       nombre: data.nombre,
       email: data.email,
       password: passwordHash,
+      // El registro publico siempre crea usuarios con rol USUARIO.
+      // Un admin se crea via seed o promoviendo a un usuario existente (ver README).
+      rol: "USUARIO",
     },
   });
 
-  const token = generarToken({ usuarioId: usuario.id });
+  const token = generarToken({ usuarioId: usuario.id, rol: usuario.rol });
 
   return {
     token,
-    usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email },
+    usuario: {
+      id: usuario.id,
+      nombre: usuario.nombre,
+      email: usuario.email,
+      rol: usuario.rol,
+    },
   };
 };
 
@@ -103,10 +111,15 @@ export const iniciarSesion = async (data: LoginInput) => {
     throw new AppError("Credenciales invalidas", 401);
   }
 
-  const token = generarToken({ usuarioId: usuario.id });
+  const token = generarToken({ usuarioId: usuario.id, rol: usuario.rol });
 
   return {
     token,
-    usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email },
+    usuario: {
+      id: usuario.id,
+      nombre: usuario.nombre,
+      email: usuario.email,
+      rol: usuario.rol,
+    },
   };
 };

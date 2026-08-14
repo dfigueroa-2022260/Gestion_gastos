@@ -57,6 +57,10 @@ export class AuthService {
     return !!this.obtenerToken();
   }
 
+  esAdmin(): boolean {
+    return this.usuario()?.rol === 'ADMIN';
+  }
+
   private guardarSesion(res: AuthResponse): void {
     localStorage.setItem(TOKEN_KEY, res.token);
     localStorage.setItem(USUARIO_KEY, JSON.stringify(res.usuario));

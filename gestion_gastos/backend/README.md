@@ -20,6 +20,18 @@ src/
 
 Cada modulo sigue el mismo patron: `*.routes.ts` -> `*.controller.ts` -> `*.service.ts` (y `*.schema.ts` cuando valida entrada).
 
+## Roles y JWT
+
+Cada usuario tiene un `rol`: `ADMIN` o `USUARIO` (por defecto). El registro publico
+(`POST /api/auth/registro`) siempre crea usuarios con rol `USUARIO`. El token JWT
+incluye `{ usuarioId, rol }`, y `authMiddleware` + `requireRole("ADMIN")` protegen
+las rutas que solo debe usar un admin (ej. `GET /api/usuarios`, listado completo).
+
+Para crear el primer admin, corre el seed (usa `ADMIN_EMAIL`/`ADMIN_PASSWORD` de tu `.env`):
+```
+pnpm prisma:seed
+```
+
 ## Poner en marcha
 
 1. Instalar dependencias:
@@ -32,7 +44,11 @@ Cada modulo sigue el mismo patron: `*.routes.ts` -> `*.controller.ts` -> `*.serv
    pnpm prisma:generate
    pnpm prisma:migrate
    ```
-4. Levantar el servidor en modo desarrollo:
+4. Crear el usuario admin inicial:
+   ```
+   pnpm prisma:seed
+   ```
+5. Levantar el servidor en modo desarrollo:
    ```
    pnpm dev
    ```
@@ -44,6 +60,7 @@ La API queda en `http://localhost:4000/api`.
 - `POST /api/auth/registro` — crea usuario, devuelve token
 - `POST /api/auth/login` — devuelve token
 - `GET /api/usuarios/me` — perfil (requiere `Authorization: Bearer <token>`)
+- `GET /api/usuarios` — lista todos los usuarios (**solo rol ADMIN**)
 - `GET|POST /api/categorias`, `PUT|DELETE /api/categorias/:id`
 - `GET|POST /api/gastos`, `PUT|DELETE /api/gastos/:id`
 - `GET /api/gastos/resumen` — total gastado por categoria
