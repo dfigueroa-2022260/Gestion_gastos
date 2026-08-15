@@ -1,40 +1,69 @@
+// ============================================================
+// Cash Track — Login estilo "glass card" sobre degradado naranja
+// ============================================================
+
 :host {
-  --bg: #f4f6f9;
-  --card: #ffffff;
-  --ink: #0f1f38;
-  --ink-soft: #5c6b85;
-  --moss: #e8672a;
-  --moss-dark: #c24f1b;
-  --gold: #e8672a;
+  --ink: #ffffff;
+  --ink-soft: rgba(255, 255, 255, 0.75);
+  --moss: #ff8a3d;
+  --moss-dark: #b94a1e;
+  --gold: #ff8a3d;
   --navy: #16305c;
-  --border: #e0e4ec;
-  --danger: #c43d3d;
+  --border: rgba(255, 255, 255, 0.35);
+  --danger: #ffd9d9;
 
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: var(--bg);
+  padding: 40px 20px;
   font-family: 'Inter', sans-serif;
   color: var(--ink);
-  padding: 40px 20px;
+
+  // Fondo degradado naranja, diagonal, con un brillo suave arriba a la izquierda
+  background: radial-gradient(
+      circle at 15% 10%,
+      rgba(255, 255, 255, 0.18),
+      transparent 40%
+    ),
+    linear-gradient(135deg, #ff9a4d 0%, #e8672a 45%, #b94a1e 100%);
 }
 
 .card {
   width: 100%;
   max-width: 380px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 40px 36px 32px;
+  padding: 44px 36px 36px;
   text-align: center;
+  border-radius: 24px;
+
+  // Efecto vidrio esmerilado (glassmorphism)
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 }
 
+// La ilustracion animada de la billetera queda oculta: la reemplaza el logo.
 .illustration {
-  width: 132px;
-  height: 110px;
-  margin: 0 auto 6px;
+  display: none;
+}
+
+// Insignia circular con tu logo, se dibuja arriba del nombre "Cash Track".
+// Reemplaza la URL de background-image por la ruta de tu logo real.
+.brand::before {
+  content: '';
   display: block;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-image: url('/assets/logo.png');
+  background-size: 60%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .brand {
@@ -43,6 +72,7 @@
   font-size: 26px;
   letter-spacing: -0.01em;
   margin: 6px 0 2px;
+  color: #ffffff;
 }
 
 .tagline {
@@ -73,23 +103,27 @@ label {
 
 input {
   width: 100%;
-  padding: 11px 13px;
+  padding: 12px 14px;
+  border-radius: 999px; // pill, como en la referencia
   border: 1px solid var(--border);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-  color: var(--ink);
-  background: #fbfcf9;
   outline: none;
   transition: border-color 0.15s ease, background 0.15s ease;
 
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
   &:focus {
-    border-color: var(--moss);
-    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.22);
   }
 
   &.error {
-    border-color: var(--danger);
+    border-color: #ffb3b3;
   }
 }
 
@@ -106,7 +140,7 @@ input {
 
   a {
     font-size: 12.5px;
-    color: var(--moss);
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
 
     &:hover {
@@ -117,14 +151,15 @@ input {
 
 button {
   width: 100%;
-  padding: 12px;
+  padding: 13px;
   border: none;
-  border-radius: 10px;
-  background: var(--moss);
-  color: #fff;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--moss-dark);
   font-family: 'Inter', sans-serif;
   font-size: 14.5px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.08s ease;
   display: flex;
@@ -133,7 +168,7 @@ button {
   gap: 8px;
 
   &:hover {
-    background: var(--moss-dark);
+    background: #ffffff;
   }
 
   &:active {
@@ -149,8 +184,8 @@ button {
 .spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
+  border: 2px solid rgba(185, 74, 30, 0.35);
+  border-top-color: var(--moss-dark);
   border-radius: 50%;
   display: none;
   animation: spin 0.7s linear infinite;
@@ -172,98 +207,12 @@ button {
   color: var(--ink-soft);
 
   a {
-    color: var(--moss);
+    color: #ffffff;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
 
     &:hover {
       text-decoration: underline;
     }
-  }
-}
-
-.wallet-path {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 220;
-  stroke-dashoffset: 220;
-  animation: draw 1s ease forwards 0.1s;
-}
-
-.coin {
-  transform-origin: center;
-  opacity: 0;
-  animation: fall 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) forwards 0.9s,
-    bob 2.4s ease-in-out infinite 1.6s;
-}
-
-.sprout {
-  fill: none;
-  stroke: var(--moss);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-dasharray: 60;
-  stroke-dashoffset: 60;
-  animation: draw 0.7s ease forwards 1.5s;
-}
-
-.leaf {
-  opacity: 0;
-  transform-origin: center;
-  animation: pop 0.4s ease forwards 2.1s;
-}
-
-@keyframes draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes fall {
-  0% {
-    opacity: 0;
-    transform: translateY(-30px) scale(0.6);
-  }
-  60% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-3px);
-  }
-}
-
-@keyframes pop {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .wallet-path,
-  .coin,
-  .sprout,
-  .leaf {
-    animation: none !important;
-    stroke-dashoffset: 0 !important;
-    opacity: 1 !important;
   }
 }
