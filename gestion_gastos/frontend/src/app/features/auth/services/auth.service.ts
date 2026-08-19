@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { decodeJwtPayload } from '../../../core/utils/jwt.util';
 import {
   AuthResponse,
   LoginRequest,
@@ -21,7 +22,20 @@ export class AuthService {
 
   readonly usuario = signal<Usuario | null>(this.leerUsuarioGuardado());
 
-  constructor(private readonly http: HttpClient) {}
+  // Se activa cuando el token expira (por timer local o por un 401 del backend).
+  // La UI (app.component) escucha este signal para mostrar el aviso.
+  readonly sesionExpirada = signal(false);
+
+  private temporizadorExpiracion: ReturnType<typeof setTimeout> | null = null;
+
+  constructor(private readonly http: HttpClient) {
+    // Si ya habia una sesion guardada (ej. recargaste la pagina), reprograma
+    // el vencimiento en base al tiempo que le queda al token real.
+    const token = this.obtenerToken();
+    if (token) {
+      this.programarExpiracion(token);
+    }
+  }
 
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http
@@ -44,9 +58,27 @@ export class AuthService {
   }
 
   logout(): void {
+    this.cancelarTemporizador();
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USUARIO_KEY);
     this.usuario.set(null);
+  }
+
+  /**
+   * Cierra la sesion Y muestra el aviso de "tu sesion expiro". Se llama
+   * desde el timer local o desde el interceptor cuando el backend responde
+   * 401 a una ruta protegida.
+   */
+  expirarSesion(): void {
+    if (!this.usuario() && !this.obtenerToken()) {
+      return; // ya estaba deslogueado, evita mostrar el aviso de nuevo
+    }
+    this.logout();
+    this.sesionExpirada.set(true);
+  }
+
+  cerrarAvisoExpiracion(): void {
+    this.sesionExpirada.set(false);
   }
 
   obtenerToken(): string | null {
@@ -65,10 +97,42 @@ export class AuthService {
     localStorage.setItem(TOKEN_KEY, res.token);
     localStorage.setItem(USUARIO_KEY, JSON.stringify(res.usuario));
     this.usuario.set(res.usuario);
+    this.sesionExpirada.set(false);
+    this.programarExpiracion(res.token);
   }
 
   private leerUsuarioGuardado(): Usuario | null {
     const raw = localStorage.getItem(USUARIO_KEY);
     return raw ? (JSON.parse(raw) as Usuario) : null;
+  }
+
+  /**
+   * Lee el campo `exp` real del JWT (viene firmado por el backend segun
+   * JWT_EXPIRES_IN, no hay ningun numero de minutos fijo aca) y programa
+   * el cierre automatico de sesion para ese momento exacto.
+   */
+  private programarExpiracion(token: string): void {
+    this.cancelarTemporizador();
+
+    const payload = decodeJwtPayload(token);
+    if (!payload?.exp) {
+      return;
+    }
+
+    const msRestantes = payload.exp * 1000 - Date.now();
+
+    if (msRestantes <= 0) {
+      this.expirarSesion();
+      return;
+    }
+
+    this.temporizadorExpiracion = setTimeout(() => this.expirarSesion(), msRestantes);
+  }
+
+  private cancelarTemporizador(): void {
+    if (this.temporizadorExpiracion) {
+      clearTimeout(this.temporizadorExpiracion);
+      this.temporizadorExpiracion = null;
+    }
   }
 }
